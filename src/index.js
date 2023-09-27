@@ -10,6 +10,7 @@ app.get('/',(req,res)=>{
     res.send("running............")
 })
 
+
 app.get('/webhooks', (req, res) => {
     const mode = req.query['hub.mode'];
     const challenge = req.query['hub.challenge'];
@@ -25,40 +26,56 @@ app.get('/webhooks', (req, res) => {
     }
   });
 
-  app.post('/webhooks', (req, res) => {
-    // Extract the incoming message and relevant context from the payload
-    const message = req.body.message.text; // Assuming WhatsApp message text is in "message.text"
-    const sender = req.body.sender.id; // Assuming WhatsApp sender ID is in "sender.id"
-    const timestamp = req.body.timestamp; // Assuming message timestamp is in "timestamp"
+  // WhatsApp Webhook to receive messages
+app.post('/webhooks', async (req, res) => {
+    try {
+      const userMessage = req.body.message.text; // Extract user's message
+      const sender = req.body.sender.id; // Extract sender's ID
   
-    // Implement your logic to process and respond to the incoming WhatsApp message
-    // You can also store this information for conversation management
+      // Send the user's message to ChatGPT for a response
+      const chatGPTResponse = await sendToChatGPT(userMessage);
   
-    // Example: Log the incoming message
-    console.log(`Received message from ${sender} at ${new Date(timestamp)}: ${message}`);
-  
-    // Example: Send a response (replace with your actual response logic)
-    const responseMessage = 'Thank you for your message. We will get back to you soon.';
-
-    var data = getTextMessageInput(process.env.RECIPIENT_WAID, responseMessage);
-    console.log(data);
-    sendMessage(data)
-      .then(function (res) {
-        res.redirect('/');
-        res.sendStatus(200);
-        return;
-      })
-      .catch(function (error) {
-        console.log(error);
-        console.log(error.response.data);
-        res.sendStatus(500);
-        return;
-      });
-    // Respond to the incoming webhook request
-    res.status(200).send('Received message');
+      // Send the ChatGPT response back to the user
+      var data = getTextMessageInput(process.env.RECIPIENT_WAID, responseMessage);
+        console.log(data);
+        sendMessage(data)
+        .then(function (res) {
+            res.redirect('/');
+            res.sendStatus(200);
+            return;
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log(error.response.data);
+            res.sendStatus(500);
+            return;
+        });
+      res.status(200).end();
+    } catch (error) {
+      console.error('Error processing WhatsApp message:', error.message);
+      res.status(500).end();
+    }
   });
   
-
+ 
 app.listen(3000,()=>{
     console.log('app is running on 3000')
 })
+
+
+async function sendToChatGPT(userMessage) {
+
+    const requestBody = {
+      prompt: userMessage,
+      max_tokens: 50, // Adjust for desired response length
+    };
+  
+    const response = await axios.post(chatGPTAPIURL, requestBody, {
+      headers: {
+        'Authorization': `Bearer ${chatGPTAPIKey}`,
+      },
+    });
+  
+    return response.data.choices[0].text;
+  }
+  

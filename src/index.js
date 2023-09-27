@@ -88,22 +88,38 @@ app.listen(3000,()=>{
     console.log('app is running on 3000')
 })
 
+// Import the axios library at the top of your script
+const axios = require('axios');
 
+// Define an async function to send a user message to ChatGPT
 async function sendToChatGPT(userMessage) {
-    const config = {
-      type:'post',
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${process.env.chatGPTAPIKey}`,
-      },
-      body:{
-        prompt: userMessage,
-        max_tokens: 50, // Adjust for desired response length
-      }
+  // Create a configuration object for the Axios request
+  const config = {
+    method: 'post', // HTTP method (POST)
+    url: 'https://api.openai.com/v1/chat/completions', // API endpoint
+    headers: {
+      "Content-Type": "application/json", // Request content type
+      'Authorization': `Bearer ${process.env.chatGPTAPIKey}`, // API Key authorization
+    },
+    data: {
+      prompt: userMessage, // User's message as the prompt
+      max_tokens: 50, // Adjust for desired response length
     }
-  
-    const response = await axios('https://api.openai.com/v1/chat/completions',config);
-  
+  };
+
+  try {
+    // Send the Axios request to the ChatGPT API
+    const response = await axios(config);
+
+    // Return the generated response from ChatGPT
     return response.data.choices[0].message.content;
+  } catch (error) {
+    // Handle any errors that occur during the API request
+    console.error("Error sending request to ChatGPT API:", error);
+    throw error; // Rethrow the error to be handled elsewhere if needed
   }
-  
+}
+
+// Example usage:
+// const userMessage = "Hello, ChatGPT!"; // Replace with the user's message
+// sendToChatGPT(userMessage).then(response => console.log(response));

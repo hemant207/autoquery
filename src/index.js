@@ -7,8 +7,10 @@ app.get('/',(req,res)=>{
 })
 
 app.get('/whatsapp/getmsg', (req, res) => {
+    console.log(req)
     if (req.query.challenge) {
         // Respond to the challenge request by echoing the challenge value
+        console.log(req.query.challenge)
         res.status(200).send(req.query.challenge);
       } else {
         // Handle the incoming WhatsApp message here

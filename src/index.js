@@ -67,6 +67,11 @@ sendMessage(data)
     // Respond with an error status code (e.g., 501 for Not Implemented)
     res.status(501).end();
   });
+
+}catch(error){
+    console.log(error);
+}
+})
   
  
 app.listen(3000,()=>{

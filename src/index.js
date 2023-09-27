@@ -6,7 +6,7 @@ app.get('/',(req,res)=>{
     res.send("running............")
 })
 
-app.post('https://autoquery.onrender.com/whatsapp/getmsg',(req,res)=>{
+app.get('https://autoquery.onrender.com/whatsapp/getmsg',(req,res)=>{
     console.log("msg recieved");
     console.log(req);
     res.send({'msg':req});

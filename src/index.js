@@ -49,27 +49,23 @@ app.post('/webhooks', async (req, res) => {
           console.log('Message Body:', messageBody);
     
       // Send the user's message to ChatGPT for a response
-      const chatGPTResponse = await sendToChatGPT(messageBody);
+      const chatGPTResponse = await sendToChatGPT(messageBody) || "still waiting for chat gpt";
   
       // Send the ChatGPT response back to the user
-      var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
-        console.log(data);
-        sendMessage(data)
-        .then(function (res) {
-            console.log(res);
-            return;
-        })
-        .catch(function (error) {
-            console.log(error);
-            console.log(error.response.data);
-            res.sendStatus(501);
-            return;
-        });
-      res.status(200).end();
-    } catch (error) {
-      console.error('Error processing WhatsApp message:', error.message);
-      res.status(500).end();
-    }
+var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
+console.log(data);
+sendMessage(data)
+  .then(function (response) {
+    console.log(response);
+    // Respond with a success status code
+    res.status(200).end();
+  })
+  .catch(function (error) {
+    console.log(error);
+    console.log(error.response.data);
+
+    // Respond with an error status code (e.g., 501 for Not Implemented)
+    res.status(501).end();
   });
   
  

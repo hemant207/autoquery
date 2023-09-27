@@ -8,15 +8,15 @@ app.get('/',(req,res)=>{
 
 app.get('/whatsapp/getmsg', (req, res) => {
     console.log(req)
-    if (req.query.challenge) {
+    if (req.body) {
         // Respond to the challenge request by echoing the challenge value
-        console.log(req.query.challenge)
-        res.status(200).send(req.query.challenge);
+        console.log(req.body.entry.challenge)
+        res.status(200).send(req.body.entry.challenge);
       } else {
         // Handle the incoming WhatsApp message here
         console.log(req.body); // Assuming WhatsApp sends the message payload in the request body
         // Implement your logic to process and respond to the message
-        res.status(200).send("Message received and processed.");
+        res.status(200).send(req.body.entry[0].challenge);
       }
 })
 

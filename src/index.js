@@ -35,8 +35,6 @@ app.post('/webhooks', async (req, res) => {
         const entry = req.body.entry[0];
         const userMessage = entry.changes[0].value.messages;
 
-
-        
           const message = userMessage[0]; // Get the first message
     
           // Extract message details
@@ -48,30 +46,30 @@ app.post('/webhooks', async (req, res) => {
           console.log('Phone Number:', phoneNumber);
           console.log('Message Body:', messageBody);
     
-      // Send the user's message to ChatGPT for a response
-      const chatGPTResponse = await sendToChatGPT(messageBody) || "still waiting for chat gpt";
-  
-      // Send the ChatGPT response back to the user
-var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
-console.log(data);
-sendMessage(data)
-  .then(function (response) {
-    console.log(response);
-    // Respond with a success status code
-    res.status(200).end();
-  })
-  .catch(function (error) {
-    console.log(error);
-    console.log(error.response.data);
+        // Send the user's message to ChatGPT for a response
+        const chatGPTResponse = await sendToChatGPT(messageBody) || "still waiting for chat gpt";
+    
+        // Send the ChatGPT response back to the user
+        var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
+        console.log(data);
+        sendMessage(data)
+        .then(function (response) {
+            console.log(response);
+            // Respond with a success status code
+            res.status(200).end();
+        })
+        .catch(function (error) {
+            console.log(error);
+            console.log(error.response.data);
 
-    // Respond with an error status code (e.g., 501 for Not Implemented)
-    res.status(501).end();
-  });
+            // Respond with an error status code (e.g., 501 for Not Implemented)
+            res.status(501).end();
+        });
 
-}catch(error){
-    console.log(error);
-}
-})
+        }catch(error){
+            console.log(error);
+        }
+        })
   
  
 app.listen(3000,()=>{

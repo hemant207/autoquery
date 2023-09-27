@@ -44,9 +44,10 @@ app.get('/webhooks', (req, res) => {
 app.post('/webhooks', async (req, res) => {
 
     try {
-        const entry = req.body.entry[0];
-        const userMessage = entry.changes[0].value.messages;
-        const message = userMessage[0]; // Get the first message
+      const entry = req.body.entry && req.body.entry[0];
+      const userMessage = entry && entry.changes && entry.changes[0].value.messages;
+      const message = userMessage && userMessage[0];
+      
     
         // Extract message details
         const phoneNumber = message.from;
@@ -89,18 +90,19 @@ app.listen(3000,()=>{
 
 
 async function sendToChatGPT(userMessage) {
-
-    const requestBody = {
-      prompt: userMessage,
-      max_tokens: 50, // Adjust for desired response length
-    };
-  
-    const response = await axios.post(process.env.chatGPTAPIURL, requestBody, {
+    const config = {
+      type:'post',
       headers: {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${process.env.chatGPTAPIKey}`,
       },
-    });
+      body:{
+        prompt: userMessage,
+        max_tokens: 50, // Adjust for desired response length
+      }
+    }
+  
+    const response = await axios('https://api.openai.com/v1/chat/completions',config);
   
     return response.data.choices[0].message.content;
   }

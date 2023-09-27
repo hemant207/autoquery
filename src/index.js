@@ -20,22 +20,8 @@ app.use(bodyParser())
 
 //definging routes
 app.get('/',(req,res)=>{
-
-  const data = { "messaging_product": "whatsapp", 
-                  "to": process.env.RECIPIENT_WAID, 
-                  "type": "text", 
-                  "text":"this is sending text...."
-                  }
-
-  try{
-    sendMessage(data).then((result)=>{
-      consolee.log(result)
-      res.send(result);
-    })
-  }catch(err){
-    console.log('error while sending custom message');
-  }
-  
+console.log("rend");
+res.send("hello")
 })
 
 //endpoint for checking and verifyig whatsapp message.

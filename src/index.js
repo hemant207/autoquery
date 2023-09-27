@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app  = express();
 
-app.post('/getmsg',(req,res)=>{
+app.post('https://autoquery.onrender.com/whatsapp/getmsg',(req,res)=>{
     console.log("msg recieved");
     console.log(req);
     res.send({'msg':req});

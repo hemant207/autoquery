@@ -2,10 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const app  = express();
 const { sendMessage, getTextMessageInput } = require("./messagehelper");
+const cors = require('cors');
 
 const axios = require('axios');
-
+const bodyParser = require('body-parser');
 app.use(express.json());
+app.use(cors());
+app.use(bodyParser())
 app.get('/',(req,res)=>{
     res.send("running............")
 })
@@ -31,41 +34,35 @@ app.post('/webhooks', async (req, res) => {
     try {
         const entry = req.body.entry[0];
         const userMessage = entry.changes[0].value.messages;
-      const sender = req.body.sender.id; // Extract sender's ID
 
-        if (messages.length > 0) {
-          const message = messages[0]; // Get the first message
+
+        
+          const message = userMessage[0]; // Get the first message
     
           // Extract message details
           const phoneNumber = message.from;
-          const messageId = message.id;
-          const timestamp = message.timestamp;
           const messageBody = message.text.body;
     
           // You can now use the extracted message details as needed
           console.log('Received WhatsApp Message:');
           console.log('Phone Number:', phoneNumber);
-          console.log('Message ID:', messageId);
-          console.log('Timestamp:', timestamp);
           console.log('Message Body:', messageBody);
     
-        }
       // Send the user's message to ChatGPT for a response
-      const chatGPTResponse = await sendToChatGPT(userMessage);
+      const chatGPTResponse = await sendToChatGPT(messageBody);
   
       // Send the ChatGPT response back to the user
       var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
         console.log(data);
         sendMessage(data)
         .then(function (res) {
-            res.redirect('/');
-            res.sendStatus(200);
+            console.log(res);
             return;
         })
         .catch(function (error) {
             console.log(error);
             console.log(error.response.data);
-            res.sendStatus(500);
+            res.sendStatus(501);
             return;
         });
       res.status(200).end();
@@ -88,9 +85,9 @@ async function sendToChatGPT(userMessage) {
       max_tokens: 50, // Adjust for desired response length
     };
   
-    const response = await axios.post(chatGPTAPIURL, requestBody, {
+    const response = await axios.post(process.env.chatGPTAPIURL, requestBody, {
       headers: {
-        'Authorization': `Bearer ${chatGPTAPIKey}`,
+        'Authorization': `Bearer ${process.env.chatGPTAPIKey}`,
       },
     });
   

@@ -59,10 +59,10 @@ app.post('/webhooks', async (req, res) => {
         console.log('Message Body:', messageBody);
     
         // Send the user's message to ChatGPT for a response
-        //const chatGPTResponse = await sendToChatGPT(messageBody) ;
+        const chatGPTResponse = await sendToChatGPT(messageBody) ;
     
         // Send the ChatGPT response back to the user
-        var data = getTextMessageInput(process.env.RECIPIENT_WAID, 'welcome abrod');
+        var data = getTextMessageInput(process.env.RECIPIENT_WAID, chatGPTResponse);
         console.log(data);
         sendMessage(data)
         .then(function (response) {

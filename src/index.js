@@ -13,7 +13,7 @@ app.get('/webhooks', (req, res) => {
     const challenge = req.query['hub.challenge'];
     const verifyToken = req.query['hub.verify_token'];
   
-    if (mode === 'subscribe' && verifyToken === 'meatyhamhock') {
+    if (mode === 'subscribe' && verifyToken === 'thisiswhatsappsecret') {
       // Respond to the challenge request by echoing the challenge value
       console.log(`Challenge received: ${challenge}`);
       res.status(200).send(challenge);

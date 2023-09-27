@@ -8,19 +8,21 @@ app.get('/',(req,res)=>{
     res.send("running............")
 })
 
-app.get('/whatsapp/getmsg', (req, res) => {
-    console.log(req)
-    if (req.body) {
-        // Respond to the challenge request by echoing the challenge value
-        console.log(req.body.entry.challenge)
-        res.status(200).send(req.body.entry.challenge);
-      } else {
-        // Handle the incoming WhatsApp message here
-        console.log(req.body); // Assuming WhatsApp sends the message payload in the request body
-        // Implement your logic to process and respond to the message
-        res.status(200).send(req.body.entry[0].challenge);
-      }
-})
+app.get('/webhooks', (req, res) => {
+    const mode = req.query['hub.mode'];
+    const challenge = req.query['hub.challenge'];
+    const verifyToken = req.query['hub.verify_token'];
+  
+    if (mode === 'subscribe' && verifyToken === 'meatyhamhock') {
+      // Respond to the challenge request by echoing the challenge value
+      console.log(`Challenge received: ${challenge}`);
+      res.status(200).send(challenge);
+    } else {
+      // Handle other scenarios or requests here
+      res.status(403).send('Forbidden');
+    }
+  });
+  
 
 
 app.post('/whatsapp/getmsg', (req, res) => {

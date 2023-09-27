@@ -89,7 +89,6 @@ app.listen(3000,()=>{
 })
 
 // Import the axios library at the top of your script
-const axios = require('axios');
 
 // Define an async function to send a user message to ChatGPT
 async function sendToChatGPT(userMessage) {

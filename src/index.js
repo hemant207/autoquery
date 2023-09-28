@@ -50,7 +50,7 @@ app.post('/webhooks', async (req, res) => {
       
     
         // Extract message details
-        const phoneNumber = message.from;
+        const phoneNumber = message.from || "+1 555 059 7236";
         const messageBody = message.text.body;
     
         // You can now use the extracted message details as needed
@@ -101,8 +101,9 @@ async function sendToChatGPT(userMessage) {
       'Authorization': `Bearer ${process.env.chatGPTAPIKey}`, // API Key authorization
     },
     data: {
-      prompt: userMessage, // User's message as the prompt
-      max_tokens: 50, // Adjust for desired response length
+      "model": "gpt-3.5-turbo",
+      "prompt": userMessage, // User's message as the prompt
+      "max_tokens": 50, // Adjust for desired response length
     }
   };
 
@@ -111,7 +112,7 @@ async function sendToChatGPT(userMessage) {
     const response = await axios(config);
 
     // Return the generated response from ChatGPT
-    return response.data.choices[0].message.content;
+    return response.data.choices[0].message.content
   } catch (error) {
     // Handle any errors that occur during the API request
     console.error("Error sending request to ChatGPT API:", error);
